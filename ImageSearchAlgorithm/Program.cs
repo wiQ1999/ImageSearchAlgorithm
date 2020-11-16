@@ -31,6 +31,7 @@ namespace ImageSearchAlgorithm
 
 			Console.WriteLine(stopwatch.ElapsedMilliseconds);
 
+
             Console.ReadKey();
             /*
             BitmapData MainImageData;
