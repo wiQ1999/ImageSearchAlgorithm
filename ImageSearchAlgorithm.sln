@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageSearchAlgorithm", "ImageSearchAlgorithm\ImageSearchAlgorithm.csproj", "{6DC8AAD7-D63E-47C0-8CF0-2597B0AE35C8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6DC8AAD7-D63E-47C0-8CF0-2597B0AE35C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DC8AAD7-D63E-47C0-8CF0-2597B0AE35C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DC8AAD7-D63E-47C0-8CF0-2597B0AE35C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DC8AAD7-D63E-47C0-8CF0-2597B0AE35C8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {19551CD6-20B8-4B5D-85E8-F9E0D509F83A}
+	EndGlobalSection
+EndGlobal
