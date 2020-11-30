@@ -12,30 +12,47 @@ namespace ImageSearchAlgorithm
 {
     class Program
 	{
-        const string MainImagePath1 = @"img\image01.png";
-        const string SearchImagePath1 = @"img\image01.1.png";
-        const string MainImagePath2 = @"img\image02.png";
-        const string SearchImagePath2 = @"img\image02.1.png";
-        const string MainImagePath3 = @"img\image03.png";
-        const string SearchImagePath3 = @"img\image03.1.png";
-
-        const string Podstawa = @"img\Przypadki\Podstawa.png";
-        const string PodstawaOptymistyczny = @"img\Przypadki\PodstawaOptymistyczny.png";
-        const string Optymistyczny = @"img\Przypadki\Optymistyczny.png";
-        const string PodstawaPesymistyczny = @"img\Przypadki\PodstawaPesymistyczny.png";
-        const string Pesymistyczny = @"img\Przypadki\Pesymistyczny.png";
-        const string Calosc = @"img\Przypadki\Calosc.png";
+        const string Path = @"E:\Programowanie\C#\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
 
         static void Main(string[] args)
         {
             Stopwatch stopwatch = new Stopwatch();
 
-            Bitmap MainImage;
-            Bitmap SearchImage;
-            
-            for (int image = 0; image < 8; image++)
-            {
+            int loops = 1;
 
+            Bitmap MainImage = null;
+            Bitmap SearchImage = null;
+            
+            for (int image = 0; image < 5; image++)
+            {
+                switch (image)
+                {
+                    case 0:
+                        MainImage = new Bitmap(Path + "Optymistyczny1_Main.png");
+                        SearchImage = new Bitmap(Path + "Optymistyczny1_Search.png");
+                        break;
+                    case 1:
+                        MainImage = new Bitmap(Path + "Pesymistyczny1_Main.png");
+                        SearchImage = new Bitmap(Path + "Pesymistyczny1_Search.png");
+                        break;
+                    case 2:
+                        MainImage = new Bitmap(Path + "Pesymistyczny2_Main.png");
+                        SearchImage = new Bitmap(Path + "Pesymistyczny2_Search.png");
+                        break;
+                    case 3:
+                        MainImage = new Bitmap(Path + "Pesymistyczny3_Main.png");
+                        SearchImage = new Bitmap(Path + "Pesymistyczny3_Search.png");
+                        break;
+                    case 4:
+                        MainImage = new Bitmap(Path + "Gra_Main.png");
+                        SearchImage = new Bitmap(Path + "Gra_Search.png");
+                        break;
+                }
+
+                for (int i = 0; i < loops; i++)
+                {
+                    Console.WriteLine(FirstPixel(MainImage, SearchImage));
+                }
             }
 
             Console.ReadKey();
