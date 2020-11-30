@@ -7,9 +7,11 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+
 /*
 https://codereview.stackexchange.com/questions/138011/find-a-bitmap-within-another-bitmap
 */
+
 namespace ImageSearchAlgorithm
 {
 	class Program
@@ -21,112 +23,100 @@ namespace ImageSearchAlgorithm
         const string MainImagePath3 = @"img\image03.png";
         const string SearchImagePath3 = @"img\image03.1.png";
 
+        const string Podstawa = @"img\Przypadki\Podstawa.png";
+        const string PodstawaOptymistyczny = @"img\Przypadki\PodstawaOptymistyczny.png";
+        const string Optymistyczny = @"img\Przypadki\Optymistyczny.png";
+        const string PodstawaPesymistyczny = @"img\Przypadki\PodstawaPesymistyczny.png";
+        const string Pesymistyczny = @"img\Przypadki\Pesymistyczny.png";
+        const string Calosc = @"img\Przypadki\Calosc.png";
+
         static void Main(string[] args)
         {
             Stopwatch stopwatch = new Stopwatch();
 
-            Bitmap MainImage = new Bitmap(MainImagePath1);
-            Bitmap SearchImage = new Bitmap(SearchImagePath1);
+            Bitmap MainImage;
+            Bitmap SearchImage;
 
-            
-            int loops = 50;
+            for (int image = 0; image < 8; image++)
+            {
 
-            for (int i = 0; i < loops; i++)
-            {
-                stopwatch.Start();
-                MemoryFirstPixel(MainImage, SearchImage);
-                stopwatch.Stop();
             }
-            Console.WriteLine(stopwatch.ElapsedMilliseconds/loops);
-            stopwatch.Reset();
-            
-            for (int i = 0; i < loops; i++)
-            {
-                stopwatch.Start();
-                Find(MainImage, SearchImage);
-                stopwatch.Stop();
-            }
-            Console.WriteLine(stopwatch.ElapsedMilliseconds / loops);
-            stopwatch.Reset();
-            
-            
+
             Console.ReadKey();
         }
 
-        static bool MemoryFirstPixel(Bitmap a_MainImage, Bitmap a_SearchImage)
+        static Point? InsideMemoryAllPoint(Bitmap a_MainImage, Bitmap a_SearchImage)
+        {
+            BitmapData MainImageData = a_MainImage.LockBits(new Rectangle(0, 0, a_MainImage.Width, a_MainImage.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData SearchImageData = a_SearchImage.LockBits(new Rectangle(0, 0, a_SearchImage.Width, a_SearchImage.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            try
+            {
+                for (int yMain = 0, yLength = a_MainImage.Height - a_SearchImage.Height + 1; yMain < yLength; ++yMain)
+                {
+                    int[] MainImageLine = new int[a_MainImage.Width];
+                    Marshal.Copy(MainImageData.Scan0 + yMain * MainImageData.Stride, MainImageLine, 0, a_MainImage.Width);
+                    for (int xMain = 0, xLength = a_MainImage.Width - a_SearchImage.Width + 1; xMain < xLength; xMain++)
+                    {
+                        bool isMatch = true;
+                        for (int ySearch = 0; ySearch < a_SearchImage.Height; ySearch++)
+                        {
+                            int[] SearchImageLine = new int[a_SearchImage.Width];
+                            Marshal.Copy(SearchImageData.Scan0 + ySearch * SearchImageData.Stride, SearchImageLine, 0, a_SearchImage.Width);
+                            for (int xSearch = 0; xSearch < a_SearchImage.Width; xSearch++)
+                            {
+                                if (MainImageLine[xMain + xSearch] != SearchImageLine[xSearch])
+                                {
+                                    isMatch = false;
+                                    break;
+                                }
+                            }
+                            if (!isMatch)
+                                break;
+                        }
+                        if (isMatch)
+                            return new Point(xMain, yMain);
+                    }
+                }
+                return null;
+            }
+            finally
+            {
+                a_MainImage.UnlockBits(MainImageData);
+                a_SearchImage.UnlockBits(SearchImageData);
+            }
+        }
+
+        static Point? MemoryAllPoint(Bitmap a_MainImage, Bitmap a_SearchImage)
         {
             int[][] MainImageArray = GetPixelArray(a_MainImage);
             int[][] SearchImageArray = GetPixelArray(a_SearchImage);
 
-            int RedusedWidth = a_MainImage.Width - a_SearchImage.Width;
-            int RedusedHeight = a_MainImage.Height - a_SearchImage.Height;
-
-            foreach (int[] mainLine in MainImageArray)
+            for (int yMain = 0, yLength = MainImageArray.Length - SearchImageArray.Length + 1; yMain < yLength; yMain++)
             {
-                for (int x = 0, n = mainLine.Length - SearchImageArray.GetLength(0); x < n; x++)
+                for (int xMain = 0, xLength = MainImageArray[0].Length - SearchImageArray[0].Length + 1; xMain < xLength; xMain++)
                 {
-
-                }
-            }
-
-
-            for (int MainX = 0; MainX < RedusedWidth; MainX++)
-            {
-                for (int MainY = 0; MainY < RedusedHeight; MainY++)
-                {
-                    if (MainImageArray[MainY][MainX] == SearchImageArray[0][0])
+                    bool isMatch = true;
+                    for (int ySearch = 0; ySearch < SearchImageArray.Length; ySearch++)
                     {
-                        bool IsCorrect = true;
-                        int SearchX = 0;
-                        while (SearchX < a_SearchImage.Width && IsCorrect)
+                        for (int xSearch = 0; xSearch < SearchImageArray[0].Length; xSearch++)
                         {
-                            for (int SearchY = 0; SearchY < a_SearchImage.Height; SearchY++)
+                            if (MainImageArray[yMain + ySearch][xMain + xSearch] != SearchImageArray[ySearch][xSearch])
                             {
-                                if (MainImageArray[MainY + SearchY][MainX + SearchX] != SearchImageArray[SearchY][SearchX])
-                                {
-                                    IsCorrect = false;
-                                    break;
-                                }
+                                isMatch = false;
+                                break;
                             }
-                            SearchX++;
                         }
-                        if (IsCorrect)
-                            return true;
+                        if (!isMatch)
+                            break;
                     }
+                    if (isMatch)
+                        return new Point(xMain, yMain);
                 }
             }
-
-            return false;
-        }
-
-        #region internet
-
-        public static Point? Find(Bitmap haystack, Bitmap needle)
-        {
-            if (null == haystack || null == needle)
-            {
-                return null;
-            }
-            if (haystack.Width < needle.Width || haystack.Height < needle.Height)
-            {
-                return null;
-            }
-
-            var haystackArray = GetPixelArray(haystack);
-            var needleArray = GetPixelArray(needle);
-
-            foreach (var firstLineMatchPoint in FindMatch(haystackArray.Take(haystack.Height - needle.Height), needleArray[0]))
-            {
-                if (IsNeedlePresentAtLocation(haystackArray, needleArray, firstLineMatchPoint, 1))
-                {
-                    return firstLineMatchPoint;
-                }
-            }
-
             return null;
         }
 
-        private static int[][] GetPixelArray(Bitmap bitmap)
+        static int[][] GetPixelArray(Bitmap bitmap)
         {
             var result = new int[bitmap.Height][];
             var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly,
@@ -142,49 +132,6 @@ namespace ImageSearchAlgorithm
 
             return result;
         }
-
-        private static IEnumerable<Point> FindMatch(IEnumerable<int[]> haystackLines, int[] needleLine)
-        {
-            var y = 0;
-            foreach (var haystackLine in haystackLines)
-            {
-                for (int x = 0, n = haystackLine.Length - needleLine.Length; x < n; ++x)
-                {
-                    if (ContainSameElements(haystackLine, x, needleLine, 0, needleLine.Length))
-                    {
-                        yield return new Point(x, y);//yield zapobiega powtarzaniu return'ów
-                    }
-                }
-                y += 1;
-            }
-        }
-
-        private static bool ContainSameElements(int[] first, int firstStart, int[] second, int secondStart, int length)
-        {
-            for (int i = 0; i < length; ++i)
-            {
-                if (first[i + firstStart] != second[i + secondStart])
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private static bool IsNeedlePresentAtLocation(int[][] haystack, int[][] needle, Point point, int alreadyVerified)
-        {
-            //we already know that "alreadyVerified" lines already match, so skip them
-            for (int y = alreadyVerified; y < needle.Length; ++y)
-            {
-                if (!ContainSameElements(haystack[y + point.Y], point.X, needle[y], 0, needle[y].Length))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        #endregion
 
         static bool FirstPixelBorder(Bitmap a_MainImage, Bitmap a_SearchImage)
         {
@@ -306,39 +253,28 @@ namespace ImageSearchAlgorithm
 
         static bool TheSlownest(Bitmap a_MainImage, Bitmap a_SearchImage)
         {
-            int RedusedWidth = a_MainImage.Width - a_SearchImage.Width;
-            int RedusedHeight = a_MainImage.Height - a_SearchImage.Height;
-
-            for (int MainX = 0; MainX < RedusedWidth; MainX++)
+            for (int yMain = 0, yLength = a_MainImage.Width - a_SearchImage.Width + 1; yMain < yLength; yMain++)
             {
-                for (int MainY = 0; MainY < RedusedHeight; MainY++)
+                for (int xMain = 0, xLength = a_MainImage.Height - a_SearchImage.Height + 1; xMain < xLength; xMain++)
                 {
                     bool IsCorrect = true;
-                    int SearchX = 0;
-                    while (SearchX < a_SearchImage.Width && IsCorrect)
+                    int ySearch = 0;
+                    while (ySearch < a_SearchImage.Width && IsCorrect)
                     {
-                        int SearchY = 0;
-                        while (SearchY < a_SearchImage.Height && IsCorrect)
+                        int xSearch = 0;
+                        while (xSearch < a_SearchImage.Height && IsCorrect)
                         {
-                            if (a_MainImage.GetPixel(MainX + SearchX, MainY + SearchY) != a_SearchImage.GetPixel(SearchX, SearchY))
+                            if (a_MainImage.GetPixel(yMain + ySearch, xMain + xSearch) != a_SearchImage.GetPixel(ySearch, xSearch))
                                 IsCorrect = false;
-                            SearchY++;
+                            xSearch++;
                         }
-                        SearchX++;
+                        ySearch++;
                     }
                     if (IsCorrect)
                         return true;
                 }
             }
             return false;
-        }
-
-        static int GetObjectSize(object a_Object)
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            MemoryStream ms = new MemoryStream();
-            bf.Serialize(ms, a_Object);
-            return ms.ToArray().Length;
         }
     }
 }
