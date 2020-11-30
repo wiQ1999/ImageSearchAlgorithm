@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
 
 /*
 https://codereview.stackexchange.com/questions/138011/find-a-bitmap-within-another-bitmap
@@ -14,7 +10,7 @@ https://codereview.stackexchange.com/questions/138011/find-a-bitmap-within-anoth
 
 namespace ImageSearchAlgorithm
 {
-	class Program
+    class Program
 	{
         const string MainImagePath1 = @"img\image01.png";
         const string SearchImagePath1 = @"img\image01.1.png";
@@ -36,7 +32,7 @@ namespace ImageSearchAlgorithm
 
             Bitmap MainImage;
             Bitmap SearchImage;
-
+            
             for (int image = 0; image < 8; image++)
             {
 
