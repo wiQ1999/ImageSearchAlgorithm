@@ -12,7 +12,7 @@ https://codereview.stackexchange.com/questions/138011/find-a-bitmap-within-anoth
 namespace ImageSearchAlgorithm
 {
     class Program
-	{
+    {
         const string Path = @"E:\Programowanie\C#\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
         //const string Path = @"C:\Users\Dell_3620\Source\Repos\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
 
@@ -26,8 +26,8 @@ namespace ImageSearchAlgorithm
 
             Bitmap MainImage = null;
             Bitmap SearchImage = null;
-            
-            for (int image = 0; image < 6; image++)
+
+            for (int image = 4; image < 6; image++)
             {
                 switch (image)
                 {
@@ -129,7 +129,7 @@ namespace ImageSearchAlgorithm
             int[][] searchImageLine = GetPixelArray(a_searchImage);
 
             List<Point> maches = new List<Point>();
-            
+
             for (int yMain = 0, yMainLength = a_mainImage.Height - a_searchImage.Height + 1; yMain < yMainLength; yMain++)
             {
                 int[] mainImageLine = new int[a_mainImage.Width];
@@ -137,20 +137,40 @@ namespace ImageSearchAlgorithm
                 for (int ySearch = 0, ySearchLength = yMain < a_searchImage.Height ? yMain + 1 : a_searchImage.Height; ySearch < ySearchLength; ySearch++)
                 {
                     bool isMatch = true;
-                    int xMain = 0;
-                    for (; xMain < yMainLength; xMain++)
+                    if (ySearch == 0)
                     {
-                        if (mainImageLine[xMain] != searchImageLine[ySearch][xMain])
+                        for (int xMain = 0; xMain < yMainLength; xMain++)
                         {
-                            isMatch = false;
-                            break;
+                            int xSearch = 0;
+                            for (; xSearch < a_searchImage.Width; xSearch++)
+                            {
+                                if (mainImageLine[xMain] != searchImageLine[ySearch][xMain])
+                                {
+                                    isMatch = false;
+                                    break;
+                                }
+                            }
+                            if (isMatch)
+                                maches.Add(new Point(xMain, xSearch));
                         }
                     }
-                    if (isMatch)
-                    {
-                        if(maches.Contains(new Point()))
+                    else
+                    {/*
+                        int xMain = 0;
+                        for (; xMain < yMainLength; xMain++)
+                        {
+                            if (mainImageLine[xMain] != searchImageLine[ySearch][xMain])
+                            {
+                                isMatch = false;
+                                break;
+                            }
+                        }
+                        if (isMatch)
+                        {
+                            if (maches.Contains(new Point()))
 
-                        maches.Add(new Point(xMain, yMain));
+                                maches.Add(new Point(xMain, yMain));
+                        }*/
                     }
                 }
 
