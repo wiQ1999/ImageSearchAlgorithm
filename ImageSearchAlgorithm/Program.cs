@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -13,6 +14,7 @@ namespace ImageSearchAlgorithm
     class Program
 	{
         const string Path = @"E:\Programowanie\C#\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
+        //const string Path = @"C:\Users\Dell_3620\Source\Repos\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
 
         static void Main()
         {
@@ -56,24 +58,24 @@ namespace ImageSearchAlgorithm
                 }
 
                 //GetPixel
-                for (int i = 0; i < loops; i++)
-                {
-                    stopwatch.Start();
-                    Console.Write(GetPixel(MainImage, SearchImage) + " - ");
-                    stopwatch.Stop();
-                }
-                Console.Write(stopwatch.ElapsedMilliseconds / loops + "\n");
-                stopwatch.Reset();
+                //for (int i = 0; i < loops; i++)
+                //{
+                //    stopwatch.Start();
+                //    Console.Write(GetPixel(MainImage, SearchImage) + " - ");
+                //    stopwatch.Stop();
+                //}
+                //Console.Write(stopwatch.ElapsedMilliseconds / loops + "\n");
+                //stopwatch.Reset();
 
-                //GetPixelBorder
-                for (int i = 0; i < loops; i++)
-                {
-                    stopwatch.Start();
-                    Console.Write(GetPixelBorder(MainImage, SearchImage) + " - ");
-                    stopwatch.Stop();
-                }
-                Console.Write(stopwatch.ElapsedMilliseconds / loops + "\n");
-                stopwatch.Reset();
+                ////GetPixelBorder
+                //for (int i = 0; i < loops; i++)
+                //{
+                //    stopwatch.Start();
+                //    Console.Write(GetPixelBorder(MainImage, SearchImage) + " - ");
+                //    stopwatch.Stop();
+                //}
+                //Console.Write(stopwatch.ElapsedMilliseconds / loops + "\n");
+                //stopwatch.Reset();
 
                 //MemoryArray
                 for (int i = 0; i < loops; i++)
@@ -105,8 +107,57 @@ namespace ImageSearchAlgorithm
                 Console.Write(stopwatch.ElapsedMilliseconds / loops + "\n");
                 stopwatch.Reset();
 
+                //InsideMemory3
+                for (int i = 0; i < loops; i++)
+                {
+                    stopwatch.Start();
+                    Console.Write(InsideMemory3(MainImage, SearchImage) + " - ");
+                    stopwatch.Stop();
+                }
+                Console.Write(stopwatch.ElapsedMilliseconds / loops + "\n");
+                stopwatch.Reset();
+
                 Console.WriteLine();
             }
+        }
+
+        static Point? InsideMemory3(Bitmap a_mainImage, Bitmap a_searchImage)
+        {
+            BitmapData mainImageData = a_mainImage.LockBits(new Rectangle(0, 0, a_mainImage.Width, a_mainImage.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            //BitmapData searchImageData = a_searchImage.LockBits(new Rectangle(0, 0, a_searchImage.Width, a_searchImage.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            int[][] searchImageLine = GetPixelArray(a_searchImage);
+
+            List<Point> maches = new List<Point>();
+            
+            for (int yMain = 0, yMainLength = a_mainImage.Height - a_searchImage.Height + 1; yMain < yMainLength; yMain++)
+            {
+                int[] mainImageLine = new int[a_mainImage.Width];
+                Marshal.Copy(mainImageData.Scan0, mainImageLine, 0, a_mainImage.Width);
+                for (int ySearch = 0, ySearchLength = yMain < a_searchImage.Height ? yMain + 1 : a_searchImage.Height; ySearch < ySearchLength; ySearch++)
+                {
+                    bool isMatch = true;
+                    int xMain = 0;
+                    for (; xMain < yMainLength; xMain++)
+                    {
+                        if (mainImageLine[xMain] != searchImageLine[ySearch][xMain])
+                        {
+                            isMatch = false;
+                            break;
+                        }
+                    }
+                    if (isMatch)
+                    {
+                        if(maches.Contains(new Point()))
+
+                        maches.Add(new Point(xMain, yMain));
+                    }
+                }
+
+            }
+            a_mainImage.UnlockBits(mainImageData);
+            //a_searchImage.UnlockBits(searchImageData);
+            return null;
         }
 
         static Point? InsideMemory2(Bitmap a_mainImage, Bitmap a_searchImage)
@@ -114,33 +165,49 @@ namespace ImageSearchAlgorithm
             BitmapData mainImageData = a_mainImage.LockBits(new Rectangle(0, 0, a_mainImage.Width, a_mainImage.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
             BitmapData searchImageData = a_searchImage.LockBits(new Rectangle(0, 0, a_searchImage.Width, a_searchImage.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
+            int[] searchImageLine = new int[a_searchImage.Width];
+            Marshal.Copy(searchImageData.Scan0, searchImageLine, 0, a_searchImage.Width);
+
             for (int yMain = 0, yLength = a_mainImage.Height - a_searchImage.Height + 1; yMain < yLength; yMain++)
             {
+                int[] mainImageLine = new int[a_mainImage.Width];
+                Marshal.Copy(mainImageData.Scan0 + yMain * mainImageData.Stride, mainImageLine, 0, a_mainImage.Width);
                 for (int xMain = 0, xLength = a_mainImage.Width - a_searchImage.Width + 1; xMain < xLength; xMain++)
                 {
                     bool isMatch = true;
-                    for (int ySearch = 0; ySearch < a_searchImage.Height; ySearch++)
+                    for (int xSearch = 0; xSearch < a_searchImage.Width; xSearch++)
                     {
-                        int[] mainImageLine = new int[a_searchImage.Width];
-                        Marshal.Copy(mainImageData.Scan0 + ySearch * mainImageData.Stride, mainImageLine, xMain, a_searchImage.Width);
-                        int[] searchImageLine = new int[a_searchImage.Width];
-                        Marshal.Copy(searchImageData.Scan0 + ySearch * searchImageData.Stride, searchImageLine, 0, a_searchImage.Width);
-                        for (int xSearch = 0; xSearch < a_searchImage.Width; xSearch++)
+                        if (mainImageLine[xMain + xSearch] != searchImageLine[xSearch])
                         {
-                            if (mainImageLine[xSearch] != searchImageLine[xSearch])
-                            {
-                                isMatch = false;
-                                break;
-                            }
-                        }
-                        if (!isMatch)
+                            isMatch = false;
                             break;
+                        }
                     }
                     if (isMatch)
                     {
-                        a_mainImage.UnlockBits(mainImageData);
-                        a_searchImage.UnlockBits(searchImageData);
-                        return new Point(xMain, yMain);
+                        for (int ySearch = 1; ySearch < a_searchImage.Height; ySearch++)
+                        {
+                            int[] tempMainImageLine = new int[a_mainImage.Width];
+                            Marshal.Copy(mainImageData.Scan0 + ySearch * mainImageData.Stride, mainImageLine, 0, a_mainImage.Width);
+                            int[] tempSearchImageLine = new int[a_searchImage.Width];
+                            Marshal.Copy(searchImageData.Scan0 + ySearch * searchImageData.Stride, searchImageLine, 0, a_searchImage.Width);
+                            for (int xSearch = 0; xSearch < a_searchImage.Width; xSearch++)
+                            {
+                                if (tempMainImageLine[xMain + xSearch] != tempSearchImageLine[xSearch])
+                                {
+                                    isMatch = false;
+                                    break;
+                                }
+                            }
+                            if (!isMatch)
+                                break;
+                        }
+                        if (isMatch)
+                        {
+                            a_mainImage.UnlockBits(mainImageData);
+                            a_searchImage.UnlockBits(searchImageData);
+                            return new Point(xMain, yMain);
+                        }
                     }
                 }
             }
