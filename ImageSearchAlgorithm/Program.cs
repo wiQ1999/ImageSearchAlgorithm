@@ -12,9 +12,9 @@ https://codereview.stackexchange.com/questions/138011/find-a-bitmap-within-anoth
 namespace ImageSearchAlgorithm
 {
     class Program
-    {
-        const string Path = @"E:\Programowanie\C#\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
-        //const string Path = @"C:\Users\Dell_3620\Source\Repos\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
+	{
+        //const string Path = @"E:\Programowanie\C#\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
+        const string Path = @"C:\Users\Dell_3620\Source\Repos\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
 
         static void Main()
         {
@@ -26,8 +26,8 @@ namespace ImageSearchAlgorithm
 
             Bitmap MainImage = null;
             Bitmap SearchImage = null;
-
-            for (int image = 4; image < 6; image++)
+            
+            for (int image = 0; image < 6; image++)
             {
                 switch (image)
                 {
@@ -127,50 +127,56 @@ namespace ImageSearchAlgorithm
             //BitmapData searchImageData = a_searchImage.LockBits(new Rectangle(0, 0, a_searchImage.Width, a_searchImage.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
             int[][] searchImageLine = GetPixelArray(a_searchImage);
+            int yMainLength = a_mainImage.Height - a_searchImage.Height + 1, xMainLength = a_mainImage.Width - a_mainImage.Width + 1;
 
-            List<Point> maches = new List<Point>();
+            //List<Point> maches = new List<Point>();
+            Dictionary<int, List<Point>> maches = new Dictionary<int, List<Point>>(yMainLength);
 
-            for (int yMain = 0, yMainLength = a_mainImage.Height - a_searchImage.Height + 1; yMain < yMainLength; yMain++)
+            for (int yMain = 0; yMain < yMainLength; yMain++)
             {
+                maches.Add(yMain, new List<Point>(xMainLength));
                 int[] mainImageLine = new int[a_mainImage.Width];
                 Marshal.Copy(mainImageData.Scan0, mainImageLine, 0, a_mainImage.Width);
                 for (int ySearch = 0, ySearchLength = yMain < a_searchImage.Height ? yMain + 1 : a_searchImage.Height; ySearch < ySearchLength; ySearch++)
                 {
                     bool isMatch = true;
+                    int index = 0;
                     if (ySearch == 0)
                     {
-                        for (int xMain = 0; xMain < yMainLength; xMain++)
+                        for (int xMain = 0; xMain < xMainLength; xMain++)
                         {
                             int xSearch = 0;
                             for (; xSearch < a_searchImage.Width; xSearch++)
                             {
-                                if (mainImageLine[xMain] != searchImageLine[ySearch][xMain])
+                                if (mainImageLine[xMain + xSearch] != searchImageLine[ySearch][xSearch])
                                 {
                                     isMatch = false;
                                     break;
                                 }
                             }
                             if (isMatch)
-                                maches.Add(new Point(xMain, xSearch));
+                                maches[yMain].Add(new Point(xMain, yMain));
                         }
                     }
                     else
-                    {/*
-                        int xMain = 0;
-                        for (; xMain < yMainLength; xMain++)
+                    {
+                        for (; index < maches[yMain - ySearch].Count; index++)
                         {
-                            if (mainImageLine[xMain] != searchImageLine[ySearch][xMain])
+                            for (int xSearch = 0; xSearch < yMainLength; xSearch++)
                             {
-                                isMatch = false;
-                                break;
+                                if (mainImageLine[maches[yMain - ySearch][index].X + xSearch] != searchImageLine[ySearch][xSearch])
+                                {
+                                    maches[yMain - ySearch].RemoveAt(index);
+                                    isMatch = false;
+                                    break;
+                                }
                             }
                         }
-                        if (isMatch)
-                        {
-                            if (maches.Contains(new Point()))
-
-                                maches.Add(new Point(xMain, yMain));
-                        }*/
+                    }
+                    if (isMatch && ySearch == ySearchLength - 1 && maches[yMain - ySearch].Count != 0)
+                    {
+                        a_mainImage.UnlockBits(mainImageData);
+                        return maches[yMain - ySearch][index];
                     }
                 }
 
