@@ -127,9 +127,8 @@ namespace ImageSearchAlgorithm
             //BitmapData searchImageData = a_searchImage.LockBits(new Rectangle(0, 0, a_searchImage.Width, a_searchImage.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
             int[][] searchImageLine = GetPixelArray(a_searchImage);
-            int yMainLength = a_mainImage.Height - a_searchImage.Height + 1, xMainLength = a_mainImage.Width - a_mainImage.Width + 1;
+            int yMainLength = a_mainImage.Height - a_searchImage.Height + 1, xMainLength = a_mainImage.Width - a_searchImage.Width + 1;
 
-            //List<Point> maches = new List<Point>();
             Dictionary<int, List<Point>> maches = new Dictionary<int, List<Point>>(yMainLength);
 
             for (int yMain = 0; yMain < yMainLength; yMain++)
@@ -139,14 +138,13 @@ namespace ImageSearchAlgorithm
                 Marshal.Copy(mainImageData.Scan0, mainImageLine, 0, a_mainImage.Width);
                 for (int ySearch = 0, ySearchLength = yMain < a_searchImage.Height ? yMain + 1 : a_searchImage.Height; ySearch < ySearchLength; ySearch++)
                 {
-                    bool isMatch = true;
                     int index = 0;
                     if (ySearch == 0)
                     {
                         for (int xMain = 0; xMain < xMainLength; xMain++)
                         {
-                            int xSearch = 0;
-                            for (; xSearch < a_searchImage.Width; xSearch++)
+                            bool isMatch = true;
+                            for (int xSearch = 0; xSearch < a_searchImage.Width; xSearch++)
                             {
                                 if (mainImageLine[xMain + xSearch] != searchImageLine[ySearch][xSearch])
                                 {
@@ -160,20 +158,20 @@ namespace ImageSearchAlgorithm
                     }
                     else
                     {
-                        for (; index < maches[yMain - ySearch].Count; index++)
+                        List<Point> tempLine = maches[yMain - ySearch];
+                        for (; index < tempLine.Count; index++)
                         {
                             for (int xSearch = 0; xSearch < yMainLength; xSearch++)
                             {
-                                if (mainImageLine[maches[yMain - ySearch][index].X + xSearch] != searchImageLine[ySearch][xSearch])
+                                if (mainImageLine[tempLine[index].X + xSearch] != searchImageLine[ySearch][xSearch])
                                 {
-                                    maches[yMain - ySearch].RemoveAt(index);
-                                    isMatch = false;
+                                    tempLine.RemoveAt(index);
                                     break;
                                 }
                             }
                         }
                     }
-                    if (isMatch && ySearch == ySearchLength - 1 && maches[yMain - ySearch].Count != 0)
+                    if (ySearch == ySearchLength - 1 && maches[yMain - ySearch].Count != 0)
                     {
                         a_mainImage.UnlockBits(mainImageData);
                         return maches[yMain - ySearch][index];
