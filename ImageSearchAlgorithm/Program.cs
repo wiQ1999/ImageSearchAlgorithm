@@ -13,90 +13,175 @@ namespace ImageSearchAlgorithm
 {
     class Program
     {
-        //const string Path = @"E:\Programowanie\C#\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
-        const string Path = @"C:\Users\Dell_3620\Source\Repos\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
+        const string Path = @"E:\Programowanie\C#\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
+        //const string Path = @"C:\Users\Dell_3620\Source\Repos\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
+
+        const int LOOPS = 1;
 
         static void Main()
         {
+            OptimisticPessimistic();
+
+            Resizing();
+
+            Console.ReadKey();
+        }
+
+        static void Resizing()
+        {
             Stopwatch stopwatch = new Stopwatch();
 
-            int loops = 1;
-
+            Console.WriteLine("Resizing");
             Console.WriteLine("GetPixel\tGetPixelBorder\tMemoryArray\tInsideMemory\tMixedMemoryLine");
 
             Bitmap MainImage = null;
             Bitmap SearchImage = null;
 
-            for (int image = 0; image < 6; image++)
+            for (int image = 0; image < 2; image++)
             {
                 switch (image)
                 {
                     case 0:
-                        MainImage = new Bitmap(Path + "Optymistyczny1_Main.png");
-                        SearchImage = new Bitmap(Path + "Optymistyczny1_Search.png");
+                        MainImage = new Bitmap(Path + "Optimistic_Main.png");
+                        SearchImage = new Bitmap(Path + "Optimistic_Search.png");
                         break;
                     case 1:
-                        MainImage = new Bitmap(Path + "Optymistyczny2_Main.png");
-                        SearchImage = new Bitmap(Path + "Optymistyczny2_Search.png");
-                        break;
-                    case 2:
-                        MainImage = new Bitmap(Path + "Pesymistyczny1_Main.png");
-                        SearchImage = new Bitmap(Path + "Pesymistyczny1_Search.png");
-                        break;
-                    case 3:
-                        MainImage = new Bitmap(Path + "Pesymistyczny2_Main.png");
-                        SearchImage = new Bitmap(Path + "Pesymistyczny2_Search.png");
+                        MainImage = new Bitmap(Path + "Pessimistic_Main.png");
+                        SearchImage = new Bitmap(Path + "Pessimistic_Search.png");
                         break;
                 }
 
                 //GetPixel
-                for (int i = 0; i < loops; i++)
+                for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
                     Console.Write(GetPixel(MainImage, SearchImage) + " - ");
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / loops + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
                 stopwatch.Reset();
 
                 //GetPixelBorder
-                for (int i = 0; i < loops; i++)
+                for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
                     Console.Write(GetPixelBorder(MainImage, SearchImage) + " - ");
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / loops + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
                 stopwatch.Reset();
 
                 //MemoryArray
-                for (int i = 0; i < loops; i++)
+                for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
                     Console.Write(MemoryArray(MainImage, SearchImage) + " - ");
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / loops + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
                 stopwatch.Reset();
 
                 //InsideMemory2
-                for (int i = 0; i < loops; i++)
+                for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
                     Console.Write(InsideMemory(MainImage, SearchImage) + " - ");
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / loops + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
                 stopwatch.Reset();
 
                 //MixedMemoryLine
-                for (int i = 0; i < loops; i++)
+                for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
                     Console.Write(MixedMemoryLine(MainImage, SearchImage) + " - ");
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / loops + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                stopwatch.Reset();
+
+                Console.WriteLine();
+            }
+        }
+
+        static Bitmap ResizeBitmap100(Bitmap bitmap)
+        {
+            return new Bitmap(bitmap, new Size(bitmap.Width * 2, bitmap.Height * 2));
+        }
+
+        static void OptimisticPessimistic()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+
+            Console.WriteLine("Optimistic-Pessimistic");
+            Console.WriteLine("GetPixel\tGetPixelBorder\tMemoryArray\tInsideMemory\tMixedMemoryLine");
+
+            Bitmap MainImage = null;
+            Bitmap SearchImage = null;
+
+            for (int image = 0; image < 2; image++)
+            {
+                switch (image)
+                {
+                    case 0:
+                        MainImage = new Bitmap(Path + "Optimistic_Main.png");
+                        SearchImage = new Bitmap(Path + "Optimistic_Search.png");
+                        break;
+                    case 1:
+                        MainImage = new Bitmap(Path + "Pessimistic_Main.png");
+                        SearchImage = new Bitmap(Path + "Pessimistic_Search.png");
+                        break;
+                }
+
+                //GetPixel
+                for (int i = 0; i < LOOPS; i++)
+                {
+                    stopwatch.Start();
+                    Console.Write(GetPixel(MainImage, SearchImage) + " - ");
+                    stopwatch.Stop();
+                }
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                stopwatch.Reset();
+
+                //GetPixelBorder
+                for (int i = 0; i < LOOPS; i++)
+                {
+                    stopwatch.Start();
+                    Console.Write(GetPixelBorder(MainImage, SearchImage) + " - ");
+                    stopwatch.Stop();
+                }
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                stopwatch.Reset();
+
+                //MemoryArray
+                for (int i = 0; i < LOOPS; i++)
+                {
+                    stopwatch.Start();
+                    Console.Write(MemoryArray(MainImage, SearchImage) + " - ");
+                    stopwatch.Stop();
+                }
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                stopwatch.Reset();
+
+                //InsideMemory2
+                for (int i = 0; i < LOOPS; i++)
+                {
+                    stopwatch.Start();
+                    Console.Write(InsideMemory(MainImage, SearchImage) + " - ");
+                    stopwatch.Stop();
+                }
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                stopwatch.Reset();
+
+                //MixedMemoryLine
+                for (int i = 0; i < LOOPS; i++)
+                {
+                    stopwatch.Start();
+                    Console.Write(MixedMemoryLine(MainImage, SearchImage) + " - ");
+                    stopwatch.Stop();
+                }
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
                 stopwatch.Reset();
 
                 Console.WriteLine();
