@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
@@ -20,7 +21,7 @@ namespace ImageSearchAlgorithm
 
         static void Main()
         {
-            OptimisticPessimistic();
+            //OptimisticPessimistic();
 
             Resizing();
 
@@ -32,30 +33,26 @@ namespace ImageSearchAlgorithm
             Stopwatch stopwatch = new Stopwatch();
 
             Console.WriteLine("Resizing");
-            Console.WriteLine("GetPixel\tGetPixelBorder\tMemoryArray\tInsideMemory\tMixedMemoryLine");
+            Console.WriteLine("Size\tGetPixel\tGetPixelBorder\tMemoryArray\tInsideMemory\tMixedMemoryLine");
 
-            Bitmap MainImage = null;
-            Bitmap SearchImage = null;
+            Bitmap MainImage = new Bitmap(Path + "ReziseBig_Main.png");
+            Bitmap SearchImage = new Bitmap(Path + "ReziseBig_Search.png");
 
-            for (int image = 0; image < 2; image++)
+            for (int multiplier = 100; multiplier <= MainImage.Width; multiplier += 100)
             {
-                switch (image)
-                {
-                    case 0:
-                        MainImage = new Bitmap(Path + "Optimistic_Main.png");
-                        SearchImage = new Bitmap(Path + "Optimistic_Search.png");
-                        break;
-                    case 1:
-                        MainImage = new Bitmap(Path + "Pessimistic_Main.png");
-                        SearchImage = new Bitmap(Path + "Pessimistic_Search.png");
-                        break;
-                }
+                Bitmap tempMainImage = ResizeBitmap(MainImage, multiplier);
+                Bitmap tempSearchImage = ResizeBitmap(SearchImage, multiplier / 2);
+
+                //tempMainImage.Save("Main" + multiplier + ".png");
+                //tempSearchImage.Save("Search" + multiplier + ".png");
+
+                Console.WriteLine(tempMainImage.Width + "-" + tempSearchImage.Width);
 
                 //GetPixel
                 for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(GetPixel(MainImage, SearchImage) + " - ");
+                    Console.Write(GetPixel(tempMainImage, tempSearchImage) + " - ");
                     stopwatch.Stop();
                 }
                 Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
@@ -65,7 +62,7 @@ namespace ImageSearchAlgorithm
                 for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(GetPixelBorder(MainImage, SearchImage) + " - ");
+                    Console.Write(GetPixelBorder(tempMainImage, tempSearchImage) + " - ");
                     stopwatch.Stop();
                 }
                 Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
@@ -75,7 +72,7 @@ namespace ImageSearchAlgorithm
                 for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(MemoryArray(MainImage, SearchImage) + " - ");
+                    Console.Write(MemoryArray(tempMainImage, tempSearchImage) + " - ");
                     stopwatch.Stop();
                 }
                 Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
@@ -85,7 +82,7 @@ namespace ImageSearchAlgorithm
                 for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(InsideMemory(MainImage, SearchImage) + " - ");
+                    Console.Write(InsideMemory(tempMainImage, tempSearchImage) + " - ");
                     stopwatch.Stop();
                 }
                 Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
@@ -95,7 +92,7 @@ namespace ImageSearchAlgorithm
                 for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(MixedMemoryLine(MainImage, SearchImage) + " - ");
+                    Console.Write(MixedMemoryLine(tempMainImage, tempSearchImage) + " - ");
                     stopwatch.Stop();
                 }
                 Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
@@ -105,9 +102,9 @@ namespace ImageSearchAlgorithm
             }
         }
 
-        static Bitmap ResizeBitmap100(Bitmap bitmap)
+        static Bitmap ResizeBitmap(Bitmap bitmap, int multiplier)
         {
-            return new Bitmap(bitmap, new Size(bitmap.Width * 2, bitmap.Height * 2));
+            return new Bitmap(bitmap, new Size(multiplier, multiplier));
         }
 
         static void OptimisticPessimistic()
