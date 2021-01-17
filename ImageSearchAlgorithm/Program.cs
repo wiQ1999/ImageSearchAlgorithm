@@ -22,7 +22,7 @@ namespace ImageSearchAlgorithm
 
             int loops = 1;
 
-            Console.WriteLine("GetPixel\tGetPixelBorder\tMemoryArray\tInsideMemory");
+            Console.WriteLine("GetPixel\tGetPixelBorder\tMemoryArray\tInsideMemory\tMixedMemoryLine");
 
             Bitmap MainImage = null;
             Bitmap SearchImage = null;
@@ -46,14 +46,6 @@ namespace ImageSearchAlgorithm
                     case 3:
                         MainImage = new Bitmap(Path + "Pesymistyczny2_Main.png");
                         SearchImage = new Bitmap(Path + "Pesymistyczny2_Search.png");
-                        break;
-                    case 4:
-                        MainImage = new Bitmap(Path + "Male_Main.png");
-                        SearchImage = new Bitmap(Path + "Male_Search.png");
-                        break;
-                    case 5:
-                        MainImage = new Bitmap(Path + "Duze_Main.png");
-                        SearchImage = new Bitmap(Path + "Duze_Search.png");
                         break;
                 }
 
@@ -116,11 +108,11 @@ namespace ImageSearchAlgorithm
             BitmapData mainImageData = a_mainImage.LockBits(new Rectangle(0, 0, a_mainImage.Width, a_mainImage.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
             int[][] searchImageLine = GetPixelArray(a_searchImage);
-            int yMainLength = a_mainImage.Height - a_searchImage.Height + 1, xMainLength = a_mainImage.Width - a_searchImage.Width + 1;
+            int xMainLength = a_mainImage.Width - a_searchImage.Width + 1;
 
-            Dictionary<int, List<Point>> machesPoins = new Dictionary<int, List<Point>>(yMainLength);
+            Dictionary<int, List<Point>> machesPoins = new Dictionary<int, List<Point>>(a_mainImage.Height);
 
-            for (int yMain = 0; yMain < yMainLength; yMain++)
+            for (int yMain = 0; yMain < a_mainImage.Height; yMain++)
             {
                 machesPoins.Add(yMain, new List<Point>(xMainLength));
                 int[] mainImageLine = new int[a_mainImage.Width];
