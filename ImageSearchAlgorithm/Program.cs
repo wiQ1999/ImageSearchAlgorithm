@@ -17,11 +17,12 @@ namespace ImageSearchAlgorithm
         const string Path = @"E:\Programowanie\C#\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
         //const string Path = @"C:\Users\Dell_3620\Source\Repos\ImageSearchAlgorithm\ImageSearchAlgorithm\img\";
 
-        const int LOOPS = 1;
+        const int LOOPS = 100;
+        const int LOOPSRESIZE = 10;
 
         static void Main()
         {
-            //OptimisticPessimistic();
+            OptimisticPessimistic();
 
             Resizing();
 
@@ -46,56 +47,56 @@ namespace ImageSearchAlgorithm
                 //tempMainImage.Save("Main" + multiplier + ".png");
                 //tempSearchImage.Save("Search" + multiplier + ".png");
 
-                Console.WriteLine(tempMainImage.Width + "-" + tempSearchImage.Width);
+                Console.Write(tempMainImage.Width + "\t");
 
                 //GetPixel
-                for (int i = 0; i < LOOPS; i++)
+                for (int i = 0; i < LOOPSRESIZE; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(GetPixel(tempMainImage, tempSearchImage) + " - ");
+                    GetPixel(tempMainImage, tempSearchImage);
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPSRESIZE + "\t");
                 stopwatch.Reset();
 
                 //GetPixelBorder
-                for (int i = 0; i < LOOPS; i++)
+                for (int i = 0; i < LOOPSRESIZE; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(GetPixelBorder(tempMainImage, tempSearchImage) + " - ");
+                    GetPixelBorder(tempMainImage, tempSearchImage);
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPSRESIZE + "\t");
                 stopwatch.Reset();
 
                 //MemoryArray
-                for (int i = 0; i < LOOPS; i++)
+                for (int i = 0; i < LOOPSRESIZE; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(MemoryArray(tempMainImage, tempSearchImage) + " - ");
+                    MemoryArray(tempMainImage, tempSearchImage);
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPSRESIZE + "\t");
                 stopwatch.Reset();
 
                 //InsideMemory2
-                for (int i = 0; i < LOOPS; i++)
+                for (int i = 0; i < LOOPSRESIZE; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(InsideMemory(tempMainImage, tempSearchImage) + " - ");
+                    InsideMemory(tempMainImage, tempSearchImage);
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPSRESIZE + "\t");
                 stopwatch.Reset();
 
                 //MixedMemoryLine
-                for (int i = 0; i < LOOPS; i++)
+                for (int i = 0; i < LOOPSRESIZE; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(MixedMemoryLine(tempMainImage, tempSearchImage) + " - ");
+                    MixedMemoryLine(tempMainImage, tempSearchImage);
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPSRESIZE + "\t");
                 stopwatch.Reset();
 
                 Console.WriteLine();
@@ -135,50 +136,50 @@ namespace ImageSearchAlgorithm
                 for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(GetPixel(MainImage, SearchImage) + " - ");
+                    GetPixel(MainImage, SearchImage);
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\t");
                 stopwatch.Reset();
 
                 //GetPixelBorder
                 for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(GetPixelBorder(MainImage, SearchImage) + " - ");
+                    GetPixelBorder(MainImage, SearchImage);
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\t");
                 stopwatch.Reset();
 
                 //MemoryArray
                 for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(MemoryArray(MainImage, SearchImage) + " - ");
+                    MemoryArray(MainImage, SearchImage);
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\t");
                 stopwatch.Reset();
 
                 //InsideMemory2
                 for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(InsideMemory(MainImage, SearchImage) + " - ");
+                    InsideMemory(MainImage, SearchImage);
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\t");
                 stopwatch.Reset();
 
                 //MixedMemoryLine
                 for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
-                    Console.Write(MixedMemoryLine(MainImage, SearchImage) + " - ");
+                    MixedMemoryLine(MainImage, SearchImage);
                     stopwatch.Stop();
                 }
-                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\n");
+                Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\t");
                 stopwatch.Reset();
 
                 Console.WriteLine();
