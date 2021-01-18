@@ -2,13 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-
-/*
-https://codereview.stackexchange.com/questions/138011/find-a-bitmap-within-another-bitmap
-*/
 
 namespace ImageSearchAlgorithm
 {
@@ -39,7 +34,7 @@ namespace ImageSearchAlgorithm
             Bitmap MainImage = new Bitmap(Path + "ReziseBig_Main.png");
             Bitmap SearchImage = new Bitmap(Path + "ReziseBig_Search.png");
 
-            for (int multiplier = 100; multiplier <= MainImage.Width; multiplier += 100)
+            for (int multiplier = 3000; multiplier <= MainImage.Width; multiplier += 100)
             {
                 Bitmap tempMainImage = ResizeBitmap(MainImage, multiplier);
                 Bitmap tempSearchImage = ResizeBitmap(SearchImage, multiplier / 2);
@@ -79,7 +74,7 @@ namespace ImageSearchAlgorithm
                 Console.Write(stopwatch.ElapsedMilliseconds / LOOPSRESIZE + "\t");
                 stopwatch.Reset();
 
-                //InsideMemory2
+                //InsideMemory
                 for (int i = 0; i < LOOPSRESIZE; i++)
                 {
                     stopwatch.Start();
@@ -89,15 +84,15 @@ namespace ImageSearchAlgorithm
                 Console.Write(stopwatch.ElapsedMilliseconds / LOOPSRESIZE + "\t");
                 stopwatch.Reset();
 
-                //MixedMemoryLine
-                for (int i = 0; i < LOOPSRESIZE; i++)
-                {
-                    stopwatch.Start();
-                    MixedMemoryLine(tempMainImage, tempSearchImage);
-                    stopwatch.Stop();
-                }
-                Console.Write(stopwatch.ElapsedMilliseconds / LOOPSRESIZE + "\t");
-                stopwatch.Reset();
+                ////MixedMemoryLine
+                //for (int i = 0; i < LOOPSRESIZE; i++)
+                //{
+                //    stopwatch.Start();
+                //    MixedMemoryLine(tempMainImage, tempSearchImage);
+                //    stopwatch.Stop();
+                //}
+                //Console.Write(stopwatch.ElapsedMilliseconds / LOOPSRESIZE + "\t");
+                //stopwatch.Reset();
 
                 Console.WriteLine();
             }
@@ -162,7 +157,7 @@ namespace ImageSearchAlgorithm
                 Console.Write(stopwatch.ElapsedMilliseconds / LOOPS + "\t");
                 stopwatch.Reset();
 
-                //InsideMemory2
+                //InsideMemory
                 for (int i = 0; i < LOOPS; i++)
                 {
                     stopwatch.Start();
